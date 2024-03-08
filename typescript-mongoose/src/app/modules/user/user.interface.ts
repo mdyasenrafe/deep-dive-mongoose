@@ -10,6 +10,7 @@ export interface UserType {
     countryCode: string;
     number: string;
   };
+  age: Number;
 }
 export interface UserMethods {
   fullNumber: () => string;

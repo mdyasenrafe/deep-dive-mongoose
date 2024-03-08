@@ -1,7 +1,5 @@
 import { Schema, model, Model } from "mongoose";
-import { UserType, UserMethods } from "./user.interface";
-
-type UserModelType = Model<UserType, {}, UserMethods>;
+import { UserType, UserMethods, UserModelType } from "./user.interface";
 
 const userSchema = new Schema<UserType>({
   id: {
@@ -34,10 +32,17 @@ const userSchema = new Schema<UserType>({
       type: String,
     },
   },
+  age: {
+    type: Number,
+  },
 });
 
 userSchema.method("fullNumber", function fullNumber() {
   return `${this.phoneNumber.countryCode}${this.phoneNumber.number}`;
+});
+userSchema.static("getActiveUsers", async function getActiveUsers() {
+  const users = await this.find({ status: "active" });
+  return users;
 });
 const UserModel = model<UserType, UserModelType>("user", userSchema);
 

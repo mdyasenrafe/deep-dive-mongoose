@@ -9,7 +9,24 @@ export const createUserToDB = async (payload: UserType): Promise<UserType> => {
 };
 
 export const getUsersFromDB = async (): Promise<UserType[]> => {
-  const users = await UserModel.find();
+  const users = await UserModel.aggregate([
+    {
+      $addFields: {
+        age: {
+          $toInt: {
+            $floor: {
+              $multiply: [{ $rand: {} }, 100],
+            },
+          },
+        },
+      },
+    },
+    {
+      $merge: {
+        into: "user",
+      },
+    },
+  ]);
   return users;
 };
 
@@ -25,4 +42,9 @@ export const getUserByIdFromDB = async (
     }
   );
   return user;
+};
+
+export const getActiveUsersFromDB = async (): Promise<UserType[]> => {
+  const acitveUsers = await UserModel.getActiveUsers();
+  return acitveUsers;
 };
